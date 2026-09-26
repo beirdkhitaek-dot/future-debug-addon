@@ -1,0 +1,2 @@
+# future-debug-addon
+Cheat
