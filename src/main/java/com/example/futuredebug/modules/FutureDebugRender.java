@@ -29,8 +29,11 @@ public class FutureDebugRender extends FutureDebugBase {
 
         Color color = fillColor.get();
         int alpha = fillAlpha.get();
+        ChunkPos playerChunk = mc.player.chunkPosition();
+        int renderedMarkers = 0;
 
         for (var entry : confirmedChunks.entrySet()) {
+            if (renderedMarkers >= MAX_RENDERED_MARKERS) break;
             long packed = entry.getKey();
             long start = entry.getValue();
             long age = System.currentTimeMillis() - start;
@@ -40,6 +43,8 @@ public class FutureDebugRender extends FutureDebugBase {
             int[] shape = SHAPES[Math.floorMod((int)(packed ^ (packed >>> 32)), SHAPES.length)];
             int cx = ChunkPos.getX(packed);
             int cz = ChunkPos.getZ(packed);
+            if (Math.abs(cx - playerChunk.x) > MAX_RENDER_DISTANCE_CHUNKS ||
+                Math.abs(cz - playerChunk.z) > MAX_RENDER_DISTANCE_CHUNKS) continue;
 
             double x = cx * 16.0;
             double z = cz * 16.0;
@@ -53,9 +58,13 @@ public class FutureDebugRender extends FutureDebugBase {
                 new AABB(x, RENDER_Y, z, x + w, RENDER_Y + CHUNK_THICKNESS, z + d),
                 c, c, ShapeMode.Both, 0
             );
+            renderedMarkers++;
         }
 
         for (ChunkPos pos : baseHits) {
+            if (renderedMarkers >= MAX_RENDERED_MARKERS) break;
+            if (Math.abs(pos.x - playerChunk.x) > MAX_RENDER_DISTANCE_CHUNKS ||
+                Math.abs(pos.z - playerChunk.z) > MAX_RENDER_DISTANCE_CHUNKS) continue;
             double x = pos.x * 16.0;
             double z = pos.z * 16.0;
             Color c = new Color(255, 40, 40, Math.min(255, alpha + 50));
@@ -63,6 +72,7 @@ public class FutureDebugRender extends FutureDebugBase {
                 new AABB(x, RENDER_Y + 0.15, z, x + 16, RENDER_Y + 0.25, z + 16),
                 c, c, ShapeMode.Both, 0
             );
+            renderedMarkers++;
         }
     }
 }

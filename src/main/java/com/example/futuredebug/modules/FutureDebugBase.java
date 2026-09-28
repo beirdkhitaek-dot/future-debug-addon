@@ -29,6 +29,8 @@ public abstract class FutureDebugBase extends Module {
     protected static final double CHUNK_THICKNESS = 0.1;
     protected static final double RENDER_Y = 63.0;
     protected static final int MARKER_SPACING_CHUNKS = 7;
+    protected static final int MAX_RENDERED_MARKERS = 64;
+    protected static final int MAX_RENDER_DISTANCE_CHUNKS = 16;
 
     protected final SettingGroup sgGeneral = settings.getDefaultGroup();
     protected final SettingGroup sgRender = settings.createGroup("Render");

@@ -5,6 +5,7 @@ import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.AABB;
 
 public class FutureDebug extends FutureDebugBase {
@@ -28,12 +29,17 @@ public class FutureDebug extends FutureDebugBase {
 
         Color color = fillColor.get();
         int alpha = fillAlpha.get();
+        ChunkPos playerChunk = mc.player.chunkPosition();
+        int renderedMarkers = 0;
 
         for (var entry : confirmedChunks.entrySet()) {
+            if (renderedMarkers >= MAX_RENDERED_MARKERS) break;
             long packed = entry.getKey();
             long start = entry.getValue();
             int cx = net.minecraft.world.level.ChunkPos.getX(packed);
             int cz = net.minecraft.world.level.ChunkPos.getZ(packed);
+            if (Math.abs(cx - playerChunk.x) > MAX_RENDER_DISTANCE_CHUNKS ||
+                Math.abs(cz - playerChunk.z) > MAX_RENDER_DISTANCE_CHUNKS) continue;
 
             float progress = Math.min(1f, Math.max(0f,
                 (System.currentTimeMillis() - start) / 1000f));
@@ -51,9 +57,13 @@ public class FutureDebug extends FutureDebugBase {
 
             AABB box = new AABB(x, RENDER_Y, z, x + w, RENDER_Y + CHUNK_THICKNESS, z + d);
             event.renderer.box(box, c, c, ShapeMode.Both, 0);
+            renderedMarkers++;
         }
 
         for (var pos : baseHits) {
+            if (renderedMarkers >= MAX_RENDERED_MARKERS) break;
+            if (Math.abs(pos.x - playerChunk.x) > MAX_RENDER_DISTANCE_CHUNKS ||
+                Math.abs(pos.z - playerChunk.z) > MAX_RENDER_DISTANCE_CHUNKS) continue;
             double x = pos.x * 16.0;
             double z = pos.z * 16.0;
             Color c = new Color(255, 40, 40, Math.min(255, alpha + 50));
@@ -61,6 +71,7 @@ public class FutureDebug extends FutureDebugBase {
                 new AABB(x, RENDER_Y + 0.15, z, x + 16, RENDER_Y + 0.25, z + 16),
                 c, c, ShapeMode.Both, 0
             );
+            renderedMarkers++;
         }
     }
 }
