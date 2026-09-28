@@ -1,0 +1,37 @@
+name: Build mod jar
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Lets you upload just the .zip to the repo (handy on phone).
+      - name: Unpack project zip if present
+        run: |
+          z=$(ls *.zip 2>/dev/null | head -n1 || true)
+          if [ -n "$z" ] && [ ! -f build.gradle.kts ]; then unzip -oq "$z"; fi
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.0'
+
+      - name: Build
+        run: gradle build --stacktrace
+
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: future-debug-addon-jar
+          path: build/libs/future-debug-addon-1.0.0.jar

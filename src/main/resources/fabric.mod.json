@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "future-debug-addon",
+  "version": "${version}",
+  "name": "Future Debug Addon",
+  "description": "Meteor addon containing only the FutureDebug-style debug modules.",
+  "authors": ["Converted from supplied WaterClient module"],
+  "environment": "client",
+  "entrypoints": {
+    "meteor": [
+      "com.example.futuredebug.FutureDebugAddon"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "${minecraft_version}",
+    "meteor-client": "*"
+  }
+}

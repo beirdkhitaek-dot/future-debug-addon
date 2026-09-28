@@ -1,0 +1,11 @@
+Converted from the supplied WaterClient JAR:
+- com.water.module.modules.donut.FutureDebug
+- com.water.module.modules.render.FutureDebug
+
+The original classes depend on com.water.module.Module, com.water.setting.Setting,
+com.water.utils.RenderUtils and WaterClient-specific mappings. Those dependencies are
+intentionally not copied.
+
+The Meteor addon uses Meteor Module, Setting, Render3DEvent and native Minecraft chunk
+APIs instead. Behavior is intended to match the debug scanner/rendering concept, not to
+preserve WaterClient bytecode or its unrelated client code.
